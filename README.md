@@ -32,7 +32,10 @@ INSTALLATION
 
 3. Install required dependencies:
    
-    numpy, matplotlib, pandas, astropy, pysynphot
+    numpy, matplotlib, pandas, astropy, synphot, stsynphot
+    
+    After following install instructions at stsynphot
+    your PYSYN_CDBS should be properly configured.
 
 4. Make sure the following local scripts are available 
    in your working directory (or in PYTHONPATH):
