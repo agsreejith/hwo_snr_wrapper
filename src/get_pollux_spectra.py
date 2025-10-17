@@ -2,11 +2,17 @@
 Read spectra for HWO SNR Calculator
 Author:    A. G. Sreejith
 Version:  0.5 18.09.2025     Initial beta release
+Version:  0.5 15.10.2025     Replaced pysznphot with synphot
 Notes:    Modified from HWO tools for more spectra options    
+
 """
 import os
-import pysynphot as S 
+import numpy as np
+import synphot as S 
+import stsynphot as St 
+import astropy.units as u
 from astropy.io import ascii
+from synphot.models import Empirical1D
 
 def add_spectrum_to_library(requested=None):
     """
@@ -22,7 +28,8 @@ def add_spectrum_to_library(requested=None):
 
     cwd = "../"
 
-
+    # Define the bandpass (GALEX FUV)
+    band = St.band('galex,fuv')
     spec_dict = {}
     
     # --- Special cases (fixed spectra) ---
@@ -35,19 +42,28 @@ def add_spectrum_to_library(requested=None):
     }
 
     for name, fname in special_sources.items():
-        if (requested is None) or (name in requested):
+        if (requested is None) or (requested in name):
             if (name == "Galaxy with f_esc, HI=1, HeI=1" or 
                 name == "Galaxy with f_esc, HI=0.001, HeI=1"):
                 tab = ascii.read(os.path.join(cwd, "data/source", fname))
-                sp  = S.ArraySpectrum(wave=tab['lam'], flux=tab['lh1=17.5'], 
-                                     waveunits='Angstrom', fluxunits='flam')
+                sp = S.SourceSpectrum(Empirical1D, points=tab["wave"], 
+                                      lookup_table=tab["flux"])
+                #sp  = S.ArraySpectrum(wave=tab['lam'], flux=tab['lh1=17.5'], 
+                #                     waveunits='Angstrom', fluxunits='flam')
             else :
                 tab = ascii.read(os.path.join(cwd, "data/source", fname),
                                  names=["wave", "flux"])
-                sp  = S.ArraySpectrum(wave=tab["wave"], flux=tab["flux"],
-                                 waveunits="Angstrom", fluxunits="flam")
-            trgt = sp.renorm(21., "abmag", S.ObsBandpass("galex,fuv"))
+                sp = S.SourceSpectrum(Empirical1D, points=tab["wave"], 
+                                      lookup_table=tab["flux"])
+                #sp  = S.ArraySpectrum(wave=tab["wave"], flux=tab["flux"],
+                #                 waveunits="Angstrom", fluxunits="flam")
+            trgt = sp.normalize(21.0 * u.ABmag, band,force=True)
+            #trgt = sp.renorm(21., "abmag", S.ObsBandpass("galex,fuv"))
             spec_dict[name] = trgt
+            spec_dict[name].wave = np.array(tab['wave'])
+            spec_dict[name].flux = trgt(tab['wave'] * u.AA, 
+                                        flux_unit=S.units.FLAM).value
+            
 
     fits_sources = {
         "QSO": os.path.join(cwd, "data/source/models", "grid", "agn", 
@@ -72,10 +88,14 @@ def add_spectrum_to_library(requested=None):
     }
 
     for name, path in fits_sources.items():
-        if (requested is None) or (name in requested):
-            sp = S.FileSpectrum(path)
-            sp = sp.renorm(21., "abmag", S.ObsBandpass("galex,fuv"))
+        if (requested is None) or (requested in name):
+            sp = S.SourceSpectrum.from_file(path)
+            sp = sp.normalize(21.0 * u.ABmag, band)
             spec_dict[name] = sp
+            wave = sp.waveset.to_value(u.AA)
+            flux = sp(wave, flux_unit=S.units.FLAM).value
+            spec_dict[name].wave = wave
+            spec_dict[name].flux = flux
 
 
     # --- Regular stars ---
@@ -83,30 +103,43 @@ def add_spectrum_to_library(requested=None):
              "V-esp-eri","Trappist-1","HD40307","GJ832","GJ729"]
 
     for star in stars:
-        if (requested is None) or (star in requested):
+        if (requested is None) or (requested in star):
             fname = f"{star}.dat"
             tab = ascii.read(os.path.join(cwd, "data/source", fname),
                              names=["wave","flux"])
-            sp = S.ArraySpectrum(wave=tab["wave"], flux=tab["flux"],
-                                 waveunits="Angstrom", fluxunits="flam")
+            
+            #sp = S.ArraySpectrum(wave=tab["wave"], flux=tab["flux"],
+            #                     waveunits="Angstrom", fluxunits="flam")
+            sp = S.SourceSpectrum(Empirical1D, points=tab["wave"]*u.AA,
+                                  lookup_table=tab["flux"]*S.units.FLAM)
             spec_dict[star] = sp
+            spec_dict[star].wave = np.array(tab['wave'])
+            spec_dict[star].flux = sp(tab['wave'] * u.AA, 
+                                      flux_unit=S.units.FLAM).value
+            
 
     # --- Models ---
     models = ['M7','M3','M1','K2','K2V','G8','G2V','G0V','F5','A8']    
     
     for model in models:
-        if (requested is None) or (model in requested):
+        if (requested is None) or (requested in model):
+            print(model)
             fname = f"{model}.dat"
             tab = ascii.read(os.path.join(cwd, "data/source", fname),
                              names=["wave","flux"])
-            sp = S.ArraySpectrum(wave=tab["wave"], flux=tab["flux"],
-                                 waveunits="Angstrom", fluxunits="flam")
+            #sp = S.ArraySpectrum(wave=tab["wave"], flux=tab["flux"],
+            #                     waveunits="Angstrom", fluxunits="flam")
+            sp = S.SourceSpectrum(Empirical1D, points=tab["wave"]*u.AA,
+                                  lookup_table=tab["flux"]*S.units.FLAM)
             spec_dict[model] = sp
+            spec_dict[model].wave = np.array(tab['wave'])
+            spec_dict[model].flux = sp(tab['wave'] * u.AA, 
+                                      flux_unit=S.units.FLAM).value
 
 
-    flatsp = S.FlatSpectrum(21, fluxunits='flam')
-    flat = flatsp.renorm(21., 'abmag', S.ObsBandpass('galex,fuv'))
-    spec_dict['Flat in F_lambda'] = flat  
+    #flatsp = S.FlatSpectrum(21, fluxunits='flam')
+    #flat = flatsp.renorm(21., 'abmag', S.ObsBandpass('galex,fuv'))
+    #spec_dict['Flat in F_lambda'] = flat  
 
     return spec_dict
 

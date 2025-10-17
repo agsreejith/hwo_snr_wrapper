@@ -23,7 +23,7 @@ import planet_sim as pl
 import pysynphot as S 
 
 mpl.rcParams['agg.path.chunksize'] = 10000
-
+distance = None
 
 #Parameter set up
 #**********************************************************************************
@@ -39,7 +39,7 @@ mode_selected = 'MUV'                                                           
 extime        =  1.0                                                                # Exposure time in hours
 template      = 'G2V'                                                               # Source name, refer readme for the list of sources
 
-model         = False                                                               # set to True if the source specified is pectral model
+model         = True                                                               # set to True if the source specified is pectral model
 if model != False : distance = 10                                                   # Provide distance (in parsec) for scaling flux if templeate is a model file with spectral type    
 
 """
@@ -61,9 +61,7 @@ fluxes = spec_dict[template].flux
 
 if model != False :
     fluxatE = fluxes/(distance*(parsec2AU)**2)                                      # Scaling flux to Erath (model flux at 1AU from the star)
-    nsp = S.ArraySpectrum(wave=spec_dict[template].wave, flux=fluxatE,
-                         waveunits="Angstrom", fluxunits="flam")
-    spec_dict[template] = nsp
+    spec_dict[template].flux = fluxatE
     spec_dict[template].distance =distance
     
 
@@ -72,7 +70,7 @@ signal_to_noise,source_counts,bef_int,b_counts = psu.simulate_exposure(luvoir,  
                                            ,spec_dict[template].flux, extime) 
 flux_cut = spec_dict[template].flux 
 flux_cut[spec_dict[template].wave < pollux.lambda_range[0]] = -999.  
-flux_cut[spec_dict[template].wave > pollux.lambda_range[0]] = -999.  
+flux_cut[spec_dict[template].wave > pollux.lambda_range[1]] = -999.  
 
 #************************************************************************************
 #
@@ -113,7 +111,9 @@ cx.set_ylabel(r"$\rm Effective\ area\ [cm^{2}]$", fontsize=12)
 #************************************************************************************
 if not os.path.exists(cwd+'output/'):
     os.makedirs(cwd+'output/')
-snr_header = psu.text_head_generator(pollux,template,distance=distance)
+snr_header = psu.text_head_generator(pollux,template,**({'distance':distance} 
+                                                        if distance is not None 
+                                                        else {}))
 file_out   = cwd+'output/hwo_'+(template)+'_'+(mode_selected)+'_snr.txt'             # Output filenames have the format: source_mode_snr
 figname    = cwd+'output/hwo_'+(template)+'_'+(mode_selected)+'_snr.png'
 
