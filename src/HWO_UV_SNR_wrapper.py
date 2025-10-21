@@ -20,7 +20,6 @@ import pollux_snr_util as psu
 import Telescope as T 
 import os 
 import planet_sim as pl
-import pysynphot as S 
 
 mpl.rcParams['agg.path.chunksize'] = 10000
 distance = None
