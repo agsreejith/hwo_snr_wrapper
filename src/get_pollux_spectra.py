@@ -38,16 +38,17 @@ def add_spectrum_to_library(requested=None):
       "M1 Dwarf": "dM1_etc_d5pc_101116.txt",
       "10 Myr Starburst":"10Myr_Starburst_nodust.dat",
       "Galaxy with f_esc, HI=1, HeI=1":"fesc/fe_lyccontrot1.000hi1.000hei.txt",
-      "Galaxy with f_esc, HI=0.001, HeI=1'":"fesc/fe_lyccontrot0.001hi1.000hei.txt"
+      "Galaxy with f_esc, HI=0.001, HeI=1":"fesc/fe_lyccontrot0.001hi1.000hei.txt"
     }
 
     for name, fname in special_sources.items():
         if (requested is None) or (requested in name):
+            print('here',requested,name,fname)
             if (name == "Galaxy with f_esc, HI=1, HeI=1" or 
                 name == "Galaxy with f_esc, HI=0.001, HeI=1"):
                 tab = ascii.read(os.path.join(cwd, "data/source", fname))
-                sp = S.SourceSpectrum(Empirical1D, points=tab["wave"], 
-                                      lookup_table=tab["flux"])
+                sp = S.SourceSpectrum(Empirical1D, points=tab["lam"], 
+                                      lookup_table=tab["lh1=17.5"])
                 #sp  = S.ArraySpectrum(wave=tab['lam'], flux=tab['lh1=17.5'], 
                 #                     waveunits='Angstrom', fluxunits='flam')
             else :
@@ -60,8 +61,13 @@ def add_spectrum_to_library(requested=None):
             trgt = sp.normalize(21.0 * u.ABmag, band,force=True)
             #trgt = sp.renorm(21., "abmag", S.ObsBandpass("galex,fuv"))
             spec_dict[name] = trgt
-            spec_dict[name].wave = np.array(tab['wave'])
-            spec_dict[name].flux = trgt(tab['wave'] * u.AA, 
+            if 'wave' in tab.colnames:
+                spec_dict[name].wave = np.array(tab['wave'])
+                spec_dict[name].flux = trgt(tab['wave'] * u.AA, 
+                                            flux_unit=S.units.FLAM).value
+            else :
+                spec_dict[name].wave = np.array(tab['lam'])
+                spec_dict[name].flux = trgt(tab['lam'] * u.AA, 
                                         flux_unit=S.units.FLAM).value
             
 

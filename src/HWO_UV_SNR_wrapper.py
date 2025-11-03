@@ -36,7 +36,7 @@ luvoir = T.Telescope(8., 280., 500.)                                            
 pollux = T.Spectropolarimeter()                                                     # Selecting POLLUX as the HWO instrument
 mode_selected = 'MUV'                                                               # Mode selection: FUVPOL,MUV,MUVPOL,NUV,NUVPOL,OPT,OPTPOL,NIR,NIRPOL 
 extime        =  1.0                                                                # Exposure time in hours
-template      = 'G2V'                                                               # Source name, refer readme for the list of sources
+template      = 'Galaxy with f_esc, HI=0.001, HeI=1'                                                               # Source name, refer readme for the list of sources
 
 model         = True                                                               # set to True if the source specified is pectral model
 if model != False : distance = 10                                                   # Provide distance (in parsec) for scaling flux if templeate is a model file with spectral type    
