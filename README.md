@@ -3,7 +3,14 @@ README - HWO SNR Calculator Wrapper
 ====================================================
 Author:  A. G. Sreejith
 Version: 0.5 (17.09.2025) - Initial beta release
-
+Version: 0.6 (31.03.2026) - Updated effective area curves & 
+                            wavelength range for all modes.
+                          - resolving power of all modes 
+                            set to 100K
+                          - updated source list
+                          - renamed OPT & OPTPOL to VIS & VISPOL
+                          - aditional check to see if source spectrum
+                            is avaliable & warning to check wave coverage   
 ----------------------------------------------------
 DESCRIPTION
 ----------------------------------------------------
@@ -58,7 +65,7 @@ project_root/
 |   |-- pollux_snr_util.py
 |   |-- Telescope.py
 |   |-- planet_sim.py
-|   |-- hwo_snr_wrapper.py       (this main script)
+|   |-- hwo_snr_wrapper.py       (the main script)
 |
 |-- output/                      (generated SNR text files and plots)
 
@@ -73,8 +80,8 @@ The Pollux spectropolarimeter modes currently supported are:
 - MUVPOL    : Mid Ultraviolet with Polarimetry
 - NUV       : Near Ultraviolet spectroscopy
 - NUVPOL    : Near Ultraviolet with Polarimetry
-- OPT       : Optical spectroscopy
-- OPTPOL    : Optical with Polarimetry
+- VIS       : Visible spectroscopy
+- VISPOL    : Visible with Polarimetry
 - NIR       : Near Infrared spectroscopy
 - NIRPOL    : Near Infrared with Polarimetry
 
@@ -99,10 +106,6 @@ Current available sources include:
 - GJ 729
 - HD 40307
 - Classical T Tauri
-- O5V Star
-- O5V Star
-- G2V Star
-- M1 Dwarf
 - G191B2B (WD)
 - GD71 (WD)
 - GD153 (WD)

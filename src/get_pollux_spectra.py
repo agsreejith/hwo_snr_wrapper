@@ -2,7 +2,8 @@
 Read spectra for HWO SNR Calculator
 Author:    A. G. Sreejith
 Version:  0.5 18.09.2025     Initial beta release
-Version:  0.5 15.10.2025     Replaced pysznphot with synphot
+Version:  0.5 15.10.2025     Replaced pysynphot with synphot
+Version: 0.6 31.03.2026      Updated check for source names
 Notes:    Modified from HWO tools for more spectra options    
 
 """
@@ -142,7 +143,9 @@ def add_spectrum_to_library(requested=None):
             spec_dict[model].flux = sp(tab['wave'] * u.AA, 
                                       flux_unit=S.units.FLAM).value
 
-
+    all_targets = set(models)|set(stars)|set(fits_sources)|set(special_sources)
+    if requested not in all_targets:
+        raise ValueError(f"{requested} doesnot have a source spectrum")
     #flatsp = S.FlatSpectrum(21, fluxunits='flam')
     #flat = flatsp.renorm(21., 'abmag', S.ObsBandpass('galex,fuv'))
     #spec_dict['Flat in F_lambda'] = flat  

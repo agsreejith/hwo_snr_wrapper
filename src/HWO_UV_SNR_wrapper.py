@@ -9,6 +9,7 @@ Produces SNR text files and plots.
 
 Author:    A. G. Sreejith
 Version:  0.5 17.09.2025     Initial beta release    
+Version: 0.6 31.03.2026      Updates as in readme
 """
 
 import numpy as np
@@ -31,12 +32,15 @@ cwd = "../"
 #Constants
 parsec2AU = 206264.80624538
 
-#Current avaliable modes for POLLUX: ['FUV','MUV','NUV','OPT','NIR']
+#Current avaliable modes for POLLUX: 
+#    ['FUVPOL','MUV','NUV','VIS','NIR']
+
 luvoir = T.Telescope(8., 280., 500.)                                                # set up LUVOIR with 8 meters, T = 280, and diff limit at 500 nm 
 pollux = T.Spectropolarimeter()                                                     # Selecting POLLUX as the HWO instrument
-mode_selected = 'MUV'                                                               # Mode selection: FUVPOL,MUV,MUVPOL,NUV,NUVPOL,OPT,OPTPOL,NIR,NIRPOL 
-extime        =  1.0                                                                # Exposure time in hours
-template      = 'Galaxy with f_esc, HI=0.001, HeI=1'                                                               # Source name, refer readme for the list of sources
+mode_selected = 'NIR'                                                               # Mode selection: FUVPOL,MUV,MUVPOL,NUV,NUVPOL,OPT,OPTPOL,NIR,NIRPOL 
+extime        =  1.0  
+#K2','K2V','G8','G2V','G0V','F5','A8'                                                              # Exposure time in hours
+template      = 'K2'                                                               # Source name, refer readme for the list of sources
 
 model         = True                                                               # set to True if the source specified is pectral model
 if model != False : distance = 10                                                   # Provide distance (in parsec) for scaling flux if templeate is a model file with spectral type    
@@ -85,6 +89,9 @@ ax.set_ylabel(r"$\rm Flux\ [ergs~cm^{2}~s^{-1}~\AA^{-1}]$", fontsize=12)
 ax.set_xlim(pollux.lambda_range[0], pollux.lambda_range[1])
 st = psu.find_nearest(spec_dict[template].wave, pollux.lambda_range[0])
 en = psu.find_nearest(spec_dict[template].wave, pollux.lambda_range[1])
+if spec_dict[template].wave[-1] <  pollux.lambda_range[1]:
+    print(f"WARNING: For the mode: {mode_selected},"+
+         "source spectrum donot cover the entire bandwidth")
 ax.set_ylim(0,max(spec_dict[template].flux[st:en]))
 ax.set_xlabel(r"$\rm Wavelength\ [\AA]$", fontsize=12)
 plt.title('Flux vs Wavelength ('+template+')')
