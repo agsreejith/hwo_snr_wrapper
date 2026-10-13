@@ -184,9 +184,9 @@ EXTENDING THE CODE
 - Add new source templates in get_pollux_spectra.py
 - Add new instrument modes or configurations in Telescope.py
 
-====================================================
+----------------------------------------------------
 END OF README
-====================================================
+----------------------------------------------------
 
 
 # hwo_snr_wrapper
