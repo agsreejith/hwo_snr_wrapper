@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pollux-etc"
+version = "0.1.0"
+description = "SNR calculator for POLLUX on HWO/LUVOIR with a NiceGUI front end"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "pandas",
+    "astropy",
+    "synphot",
+    "stsynphot",
+    "nicegui>=2.0",
+    "plotly",
+]
+
+[project.scripts]
+pollux_etc = "pollux_etc:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+py-modules = [
+    "pollux_etc",
+    "get_pollux_spectra",
+    "pollux_snr_util",
+    "Telescope",
+    "planet_sim",
+]
