@@ -1,4 +1,4 @@
-# Makefile for hwo_snr_wrapper (POLLUX SNR calculator + NiceGUI front end)
+# Makefile for hwo_snr_wrapper (POLLUX SNR calculator + front end)
 #
 # Expected layout (run `make` from project_root):
 #

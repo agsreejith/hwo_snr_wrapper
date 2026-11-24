@@ -154,7 +154,7 @@ Settings can be overridden on the command line, for example `make app PORT=8080`
 - **Port already in use:** use `pollux_etc --port 8080`.
 
 ## Source Resolution
-- M7  variable (above 2k, 100K or more in FUV and IR)  
+- M7  variable (above 2k, 100K or more in FUV and IR) 
 - M3  variable (above 2k, 100K or more in FUV and IR) 
 - M1  variable (above 2k, 100K or more in FUV and IR) 
 - K2  variable (above 2k, 50k or more in NUV, 100K or more in FUV and IR)
