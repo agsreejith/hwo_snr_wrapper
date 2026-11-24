@@ -3,10 +3,9 @@
 ----------------------------------------------------
 Author:  A. G. Sreejith, IWF, ÖAW, Graz, Austria
 
-Version: 0.5 (17.09.2025) - Initial beta release
-
-Version: 0.6 (31.03.2026) - Updated effective area curves & 
-                            wavelength range for all modes.
+Version: 0.5 (17.09.2025) - Initial beta release  
+Version: 0.6 (31.03.2026) - Updated effective area curves  
+                          -wavelength range for all modes
                           - resolving power of all modes 
                             set to 100K
                           - updated source list
