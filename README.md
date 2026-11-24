@@ -14,6 +14,7 @@ Version: 0.6 (31.03.2026) - Updated effective area curves &
 Version: 0.7 (23.11.2026) - Created makefile and command line runnable
                           - renamed VIS & VISPOL  to OPT & OPTPOL
                           - browser-based front end (NiceGUI + Plotly)  
+
 ----------------------------------------------------
 DESCRIPTION
 ----------------------------------------------------
