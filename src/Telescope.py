@@ -3,6 +3,7 @@ Define a telescope class for HWO with instrument clases
 Author:    A. G. Sreejith
 Version:  0.5 17.09.2025     Initial beta release
 Version: 0.6 31.03.2026     Updated effective area, wave limits, mode names
+Version: 0.7 26.11.2026     Updated effective area, wave limits, mode names
 Notes:    Modified from HWO tools for POLLUX and LUMOS    
 """
 from __future__ import print_function
@@ -233,7 +234,7 @@ class Spectrograph():
            self.mode_name = 'IFU' 
            self.R = 5000.    
            
-           
+            
 class Spectropolarimeter(): 
     
     def __init__(self): 
@@ -247,7 +248,7 @@ class Spectropolarimeter():
         self.CD_R         = pollux['CD_R']
         self.Det_QE       = pollux['dDOPED_QE']
         self.mirror_R     = pollux['R_percent']    
-        self.aeff         = pollux['EFF']*(self.mirror_R**3) 
+        self.aeff         = pollux['EFF']*(self.mirror_R**4) 
         self.bef          = pollux['BEF'] 
         self.R            = 100000.
         self.delta_lambda = self.wave / self.R #120750. #  EXTREMELY ROUGH resel width 
@@ -258,6 +259,20 @@ class Spectropolarimeter():
 
     def set_mode(self, mode_name): 
         self.mode_names = mode_name   
+        
+        
+        if 'FUV' in mode_name:
+           print('Setting the POLLUX to mode: ', mode_name) 
+           fuvpol = Table.read(cwd+'/data/instrument/POLLUX_fuvpol.csv', 
+                               format='ascii',delimiter=',') 
+           self.wave         = fuvpol['Wave']*10.0
+           self.mirror_R     = fuvpol['R_percent']    
+           self.aeff         = fuvpol['EFF']*(self.mirror_R**4) 
+           self.bef          = fuvpol['BEF'] 
+           self.lambda_range = np.array([987., 1230.]) 
+           self.mode_name    = 'FUVPOL' 
+           self.R            = 100000.     
+           self.delta_lambda = self.wave / self.R 
 
         if 'FUVPOL' in mode_name:
            print('Setting the POLLUX to mode: ', mode_name) 
@@ -265,7 +280,7 @@ class Spectropolarimeter():
                                format='ascii',delimiter=',') 
            self.wave         = fuvpol['Wave']*10.0
            self.mirror_R     = fuvpol['R_percent']    
-           self.aeff         = fuvpol['EFF']*(self.mirror_R**3) 
+           self.aeff         = fuvpol['TAU_spectrpol']*(self.mirror_R**4) 
            self.bef          = fuvpol['BEF'] 
            self.lambda_range = np.array([987., 1230.]) 
            self.mode_name    = 'FUVPOL' 
@@ -284,14 +299,14 @@ class Spectropolarimeter():
            self.R            = 100000.
            self.delta_lambda = self.wave /  self.R
            self.mirror_R     = muv['R_percent']    
-           self.aeff         = muv['EFF']*(self.mirror_R**3) 
+           self.aeff         = muv['EFF']*muv['coat_R']**4#(self.mirror_R**4) 
            
         if 'MUVPOL' in mode_name:
            print('Setting the spectrograph to mode: ', mode_name) 
            muvpol = Table.read(cwd+'/data/instrument/POLLUX_muvpol.csv', 
                                format='ascii',delimiter=',') 
            self.wave         = muvpol['Wave']*10.0
-           self.aeff         = muvpol['TAU_spectrpol']*(self.mirror_R**3) 
+           self.aeff         = muvpol['TAU_spectrpol']*(self.mirror_R**4) 
            self.bef          = muvpol['BEF'] 
            self.lambda_range = np.array([1205.3, 2359.3]) 
            self.mode_name    = 'MUVPOL' 
@@ -304,7 +319,7 @@ class Spectropolarimeter():
                             format='ascii',delimiter=',') 
            self.wave         = nuv['Wave']*10.0
            self.mirror_R     = nuv['R_percent']    
-           self.aeff         = nuv['EFF']*(self.mirror_R**3) 
+           self.aeff         = nuv['EFF']*(self.mirror_R**4) 
            self.bef          = nuv['BEF'] 
            self.lambda_range = np.array([2341., 4719.]) 
            self.mode_name    = 'NUV' 
@@ -313,37 +328,37 @@ class Spectropolarimeter():
 
         if 'NUVPOL' in mode_name:
            print('Setting the spectrograph to mode: ', mode_name) 
-           nuvpol = Table.read(cwd+'/data/instrument/POLLUX_nuvpol.txt', 
+           nuvpol = Table.read(cwd+'/data/instrument/POLLUX_nuvpol.csv', 
                                format='ascii',delimiter=',') 
            self.wave         = nuvpol['Wave']*10.0
            self.mirror_R     = nuvpol['R_percent'] 
-           self.aeff         = muvpol['TAU_spectrpol']*(self.mirror_R**3) 
+           self.aeff         = nuvpol['TAU_spectrpol']*(self.mirror_R**4) 
            self.bef          = nuvpol['BEF'] 
            self.lambda_range = np.array([2341., 4719.]) 
            self.mode_name    = 'NUVPOL' 
            self.R            = 100000.    
            self.delta_lambda = self.wave / self.R  
 
-        if 'VIS' in mode_name:
+        if 'OPT' in mode_name:
            print('Setting the spectrograph to mode: ', mode_name) 
            opt = Table.read(cwd+'/data/instrument/POLLUX_vispol.csv', 
                             format='ascii',delimiter=',') 
            self.wave         = opt['Wave']*10.0
            self.mirror_R     = opt['R_percent']    
-           self.aeff         = opt['EFF']*(self.mirror_R**3) 
+           self.aeff         = opt['EFF']*(self.mirror_R**4) 
            self.bef          = opt['BEF'] 
            self.lambda_range = np.array([4720, 9440.]) 
-           self.mode_name    = 'VIS' 
+           self.mode_name    = 'OPT' 
            self.R            = 100000.    
            self.delta_lambda = self.wave /  self.R
            
-        if 'VISPOL' in mode_name:
+        if 'OPTPOL' in mode_name:
            print('Setting the spectrograph to mode: ', mode_name) 
-           optpol = Table.read(cwd+'/data/instrument/POLLUX_vispol.txt', 
+           optpol = Table.read(cwd+'/data/instrument/POLLUX_vispol.csv', 
                                 format='ascii',delimiter=',') 
            self.wave         = optpol['Wave']*10.0
            self.mirror_R     = optpol['R_percent']    
-           self.aeff         = optpol['TAU_spectrpol']*(self.mirror_R**3) 
+           self.aeff         = optpol['TAU_spectrpol']*(self.mirror_R**4) 
            self.bef          = optpol['BEF'] 
            self.lambda_range = np.array([4720, 9440.]) 
            self.mode_name    = 'OPT' 
@@ -356,7 +371,7 @@ class Spectropolarimeter():
                              format='ascii',delimiter=',')
             self.wave         = nir['Wave']*10.0
             self.mirror_R     = nir['R_percent']    
-            self.aeff         = nir['EFF']*(self.mirror_R**3) 
+            self.aeff         = nir['EFF']*(self.mirror_R**4) 
             self.bef          = nir['BEF'] 
             self.lambda_range = np.array([9440, 18880.]) 
             self.mode_name    = 'NIR' 
@@ -365,11 +380,11 @@ class Spectropolarimeter():
         
         if 'NIRPOL' in mode_name:
              print('Setting the spectrograph to mode: ', mode_name) 
-             nirpol = Table.read(cwd+'/data/instrument/POLLUX_nirpol.txt', 
+             nirpol = Table.read(cwd+'/data/instrument/POLLUX_nirpol.csv', 
                                   format='ascii',delimiter=',') 
              self.wave         = nirpol['Wave']*10.0
              self.mirror_R     = nirpol['R_percent']    
-             self.aeff         = opt['TAU_spectrpol']*(self.mirror_R**3) 
+             self.aeff         = nirpol['TAU_spectrpol']*(self.mirror_R**4) 
              self.bef          = nirpol['BEF'] 
              self.lambda_range = np.array([9440, 18880.]) 
              self.mode_name    = 'NIRPOL' 
