@@ -2,21 +2,24 @@
 # README - HWO SNR Calculator Wrapper
 ----------------------------------------------------
 Author:  A. G. Sreejith, IWF, ÖAW, Graz, Austria
-
 Version: 0.5 (17.09.2025) - Initial beta release  
 Version: 0.6 (31.03.2026) - Updated effective area curves  
-                          -wavelength range for all modes  
-                          - resolving power of all modes   
-                            set to 100K  
-                          - updated source list  
-                          - renamed OPT & OPTPOL to VIS & VISPOL  
-                          - aditional check to see if source spectrum  
-                            is available & warning to check wave coverage    
+```
+                      -wavelength range for all modes  
+                      - resolving power of all modes   
+                        set to 100K  
+                      - updated source list  
+                      - renamed OPT & OPTPOL to VIS & VISPOL  
+                      - aditional check to see if source spectrum  
+                        is available & warning to check wave coverage    
 
+```
 Version: 0.7 (23.11.2026) - Created makefile and command line runnable  
-                          - renamed VIS & VISPOL  to OPT & OPTPOL  
-                          - browser-based front end (NiceGUI + Plotly)    
+```
+                      - renamed VIS & VISPOL  to OPT & OPTPOL  
+                      - browser-based front end (NiceGUI + Plotly)    
 
+```
 ----------------------------------------------------
 DESCRIPTION
 ----------------------------------------------------
